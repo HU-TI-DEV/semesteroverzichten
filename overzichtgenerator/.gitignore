@@ -1,0 +1,8 @@
+
+venv/
+**/api_key.txt
+**/out_LeerdoelenKaart_S3.drawio
+obs/
+.pkl
+**/*.drawio.bkp
+**/leerdoelenkaart-link-controle.drawio

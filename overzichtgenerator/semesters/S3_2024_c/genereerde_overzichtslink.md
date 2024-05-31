@@ -1,0 +1,1 @@
+https://mavehu.github.io/semesteroverzichten/semesters/S3_2024_c/semesteroverzichten-tabel.html
