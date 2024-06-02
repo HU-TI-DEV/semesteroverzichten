@@ -6,6 +6,7 @@ import pandas
 import pickle
 import random
 import shutil
+import pypandoc
 
 # NB: de index in deze array correspondeert met de score van het leerdoel met die index.
 # In de drawio grafiek is de eerste index 1 (L1_). De eerste score entry wordt dus niet gebruikt.
@@ -247,8 +248,33 @@ def get_studenten_id_tabel_fullpath(semester_config_folder):
     studenten_id_tabel_fullpath = Tools.get_full_path_from_script_path(f"{semester_config_folder}/studenten-id-tabel.md")
     return studenten_id_tabel_fullpath
 
-# Voorbeeld semester_naam = S3_2024
-def genereerLeerdoelenkaarten(semester_naam, canvas_course_id, api_key, gitpageslink, DebugMode, useIDs):
+def convert_md_to_html_and_update(semester_output_folder_fullpath,github_markdown_css_fullpath):
+    for root, dirs, files in os.walk(semester_output_folder_fullpath):
+        for file in files:
+            if file.endswith(".md"):
+                md_path = os.path.join(root, file)
+                html_path = md_path.replace(".md", ".html")
+                
+                # Convert .md to .html using pypandoc
+                output = pypandoc.convert_file(md_path, 'html', outputfile=html_path, extra_args=['--css=./github-markdown.css', '--standalone'])
+                
+                # Read the content of the HTML file
+                with open(html_path, 'r', encoding='utf-8') as f:
+                    content = f.read()
+                
+                # Replace <body> with <body class="markdown-body">
+                updated_content = content.replace('<body>', '<body class="markdown-body">')
+                
+                # Write the updated content back to the HTML file
+                with open(html_path, 'w', encoding='utf-8') as f:
+                    f.write(updated_content)
+
+                shutil.copy(github_markdown_css_fullpath,os.path.join(root, 'github-markdown.css'))
+
+                os.remove(md_path)
+
+# De uitleg van deze functie is onderaan dit bestand te vinden.
+def genereerLeerdoelenkaarten(semester_naam, canvas_course_id, api_key, gitpageslink, DebugMode, useIDs, useGithubPages):
     strLogs=""
     canvas_domain = 'canvas.hu.nl'
     ignored_assignments={}
@@ -561,6 +587,12 @@ def genereerLeerdoelenkaarten(semester_naam, canvas_course_id, api_key, gitpages
     gh_pages_startpagina_source_fullpath=Tools.get_full_path_from_script_path(semester_config_folder+'/gh-pages-startpagina.md')
     shutil.copy(gh_pages_startpagina_source_fullpath,Tools.get_full_path_from_script_path(pages_folder+'/README.md'))
 
+    if not useGithubPages:
+        # Convert .md to .html using pypandoc
+        semester_output_folder_fullpath=Tools.get_full_path_from_script_path(semester_output_folder)
+        github_markdown_css_fullpath=Tools.get_full_path_from_script_path('github-markdown.css')
+        convert_md_to_html_and_update(semester_output_folder_fullpath, github_markdown_css_fullpath)
+
     from datetime import datetime
     current_time = datetime.now()
     print("\nJe kunt de disk cache en gpu errors van de de drawio naar svg export tool negeren.")
@@ -569,16 +601,24 @@ def genereerLeerdoelenkaarten(semester_naam, canvas_course_id, api_key, gitpages
 
     Tools.write_to_file(strLogs,Tools.get_full_path_from_script_path(f"{semester_folder}/log.txt"))
 
+# UITLEG EN VOORBEELD GEBRUIK van de functie genereerLeerdoelenkaarten:
+
 # Onderstaande aanroep delete en hergenereert de map {Je semesterfolder}\leerdoelenkaarten en zijn submappen.
 # De inputs die het daarvoor gebruikt zijn: de niet- "alleen-initiele" bestanddelen van de config map en de file "api_key.txt".
 # Zet in laatstgenoemde file je API key van Canvas ()
+#
 # Met de parameter useIds=True, worden de links voor docenten en studenten geobfusceerd door een lange random postfix.
+# Gebruik dat als je publiceert naar een publieke webserver, zoals github pages.
+#
+# Met de parameter useGithubPages=True, worden de textbestanden als .md gegenereerd, en wordt het converteren naar .html aan github pages overgelaten.
+# Met de parameter useGithubPages=False, worden de textbestanden als .html gegenereerd, en wordt het converteren naar .html lokaal gedaan.
+# De laatste optie is dus geschikt voor publicatie op een andere webserver dan github pages of naar (gesharede teams-) folders.
 #
 # Voorbeeld aanroep:
 # api_key = read_api_key_from_file('api_key.txt')
 # genereerLeerdoelenkaarten(semester_naam='S3_2024_c',canvas_course_id='39753', api_key=api_key,
 #                           gitpageslink = "https://mavehu.github.io/semesteroverzichten",
-#                           DebugMode=DebugMode, useIDs=False)
+#                           DebugMode=DebugMode, useIDs=False, useGithubPages=False)
 
 # Uncomment the proper Debug Mode below:
 #------------------------------------------------
@@ -586,16 +626,16 @@ def genereerLeerdoelenkaarten(semester_naam, canvas_course_id, api_key, gitpages
 #DebugMode="Initial Debug: Store and Load pickle" 
 
 # For developinging visualisation and output based on earlier extracted canvas data (to save time)
-#DebugMode="Fast output debug: Load pickle of earlier extracted Canvas data"
+DebugMode="Fast output debug: Load pickle of earlier extracted Canvas data"
 
 # Real usage of the software: extract latest data from Canvas.
-DebugMode="Release - field usage: No pickle buffering" 
+#DebugMode="Release - field usage: No pickle buffering" 
 #------------------------------------------------
 
 api_key = read_api_key_from_file('api_key.txt')
 genereerLeerdoelenkaarten(semester_naam='S3_2024_c',canvas_course_id='39753', api_key=api_key,
                           gitpageslink = "https://mavehu.github.io/semesteroverzichten",
-                          DebugMode=DebugMode, useIDs=False)
+                          DebugMode=DebugMode, useIDs=False, useGithubPages=False)
 
 # Normaal bedrijf:
 # Roep bovenstaande functie een keer aan voor elk semester.
