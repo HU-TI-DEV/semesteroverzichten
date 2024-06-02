@@ -3,7 +3,7 @@
 | <font color="#999999">L1_</font>RC filters                                                                                                                             | 1          |
 | <font color="#999999">L2_</font>Signalen in het&nbsp;<br>frequentiedomein                                                                                              | 1          |
 | <font color="#999999">L3_</font>AC / DC                                                                                                                                | 1          |
-| <font color="#999999">L4_</font>Opamp versterker-trappen                                                                                                               | 1          |
+| <font color="#999999">L4_</font>Opamp versterker-trappen                                                                                                               | 2          |
 | <font color="#999999">L5_</font>FIR filter                                                                                                                             | 1          |
 | <font color="#999999">L6_</font>Median Filter                                                                                                                          | 1          |
 | <font color="#999999">L7_</font>PID regeling                                                                                                                           | 1          |
@@ -65,7 +65,7 @@
 | <font color="#999999">L62_</font>Persoonlijk logboek                                                                                                                   | 5          |
 | <font color="#999999">L63_</font>Systematisch toepassen <br>van reflectie van eigen gedrag in relatie tot andermans waarden en normen                                  | 1          |
 | <font color="#999999">L64_</font>Eigen handelen zo nodig aanpassen                                                                                                     | 1          |
-| <font color="#999999">L65_</font>Initiatief nemen voor gesprekken om relevante input te geven                                                                          | 1          |
+| <font color="#999999">L65_</font>Initiatief nemen voor gesprekken om relevante input te geven                                                                          | 5          |
 | <font color="#999999">L66_</font>correct, doelgericht Nederlands                                                                                                       | 5          |
 | <font color="#999999">L67_</font>Luisteren, <br>vragen adequaat beantwoorden                                                                                           | 1          |
 | <font color="#999999">L68_</font>Respectvolle toon naar medestudenten en docenten                                                                                      | 1          |

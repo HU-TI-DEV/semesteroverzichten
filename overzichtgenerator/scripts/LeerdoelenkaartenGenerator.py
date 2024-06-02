@@ -224,25 +224,20 @@ def addLog(strLogs,strLog):
     print(strLog)
     return strLogs
 
-def cleanup_pages_folders(semesteroverzichten_folder_fullpath, semesteroverzichten_bewijsmappen_folder_fullpath):
+def cleanup_pages_folders(semesteroverzichten_folder_fullpath):
     # de folders zelf verwijderen lukt niet altijd (windows rechten), maar leegmaken lukt zeker:
-    Tools.remove_directory2(semesteroverzichten_bewijsmappen_folder_fullpath)
     Tools.remove_directory2(semesteroverzichten_folder_fullpath)
-
     os.makedirs(semesteroverzichten_folder_fullpath, exist_ok=True)
-    os.makedirs(semesteroverzichten_bewijsmappen_folder_fullpath, exist_ok=True)
 
 def get_output_folders(semester_naam):
     pages_folder='../../docs'
     alle_semesteroverzichten_folder = f'{pages_folder}/semesters'
     semester_output_folder=f'{alle_semesteroverzichten_folder}/{semester_naam}'
     semesteroverzichten_folder = f'{alle_semesteroverzichten_folder}/{semester_naam}'
-    semesteroverzichten_bewijsmappen_folder = semesteroverzichten_folder+'/bewijsmappen'
     exportFileType = ".svg"
 
     semesteroverzichten_folder_fullpath = Tools.get_full_path_from_script_path(semesteroverzichten_folder)
-    semesteroverzichten_bewijsmappen_folder_fullpath = Tools.get_full_path_from_script_path(semesteroverzichten_bewijsmappen_folder)
-    return pages_folder,semester_output_folder,exportFileType,semesteroverzichten_folder_fullpath,semesteroverzichten_bewijsmappen_folder_fullpath
+    return pages_folder,semester_output_folder,exportFileType,semesteroverzichten_folder_fullpath
 
 def get_studenten_id_tabel_fullpath(semester_config_folder):
     studenten_id_tabel_fullpath = Tools.get_full_path_from_script_path(f"{semester_config_folder}/studenten-id-tabel.md")
@@ -255,8 +250,11 @@ def convert_md_to_html_and_update(semester_output_folder_fullpath,github_markdow
                 md_path = os.path.join(root, file)
                 html_path = md_path.replace(".md", ".html")
                 
+                title = file.replace('.md','')
+                title = title.replace('_',' ')
+
                 # Convert .md to .html using pypandoc
-                output = pypandoc.convert_file(md_path, 'html', outputfile=html_path, extra_args=['--css=./github-markdown.css', '--standalone'])
+                output = pypandoc.convert_file(md_path, 'html', outputfile=html_path, extra_args=['--metadata', f'title={title}', '--css=./github-markdown.css', '--standalone'])
                 
                 # Read the content of the HTML file
                 with open(html_path, 'r', encoding='utf-8') as f:
@@ -271,7 +269,7 @@ def convert_md_to_html_and_update(semester_output_folder_fullpath,github_markdow
 
                 shutil.copy(github_markdown_css_fullpath,os.path.join(root, 'github-markdown.css'))
 
-                os.remove(md_path)
+                #os.remove(md_path)
 
 # De uitleg van deze functie is onderaan dit bestand te vinden.
 def genereerLeerdoelenkaarten(semester_naam, canvas_course_id, api_key, gitpageslink, DebugMode, useIDs, useGithubPages):
@@ -310,11 +308,10 @@ def genereerLeerdoelenkaarten(semester_naam, canvas_course_id, api_key, gitpages
     semester_folder_naam, semester_folder, semester_config_folder = get_local_semester_folder_names(semester_naam)
 
     # De folder docs is de folder die naar github pages wordt gerenderd.
-    pages_folder, semester_output_folder, exportFileType, semesteroverzichten_folder_fullpath, \
-        semesteroverzichten_bewijsmappen_folder_fullpath = get_output_folders(semester_naam)
+    pages_folder, semester_output_folder, exportFileType, semesteroverzichten_folder_fullpath = get_output_folders(semester_naam)
 
     # Verwijder de oude overzichten.
-    cleanup_pages_folders(semesteroverzichten_folder_fullpath, semesteroverzichten_bewijsmappen_folder_fullpath)
+    cleanup_pages_folders(semesteroverzichten_folder_fullpath)
     
     if DebugMode!="Release - field usage: No pickle buffering":
         strLog = '\n!!! LET OP !!! DEBUG BUILD: POSSIBLY NO INFORMATION FETCHED FROM CANVAS !!!!\n'
@@ -381,13 +378,14 @@ def genereerLeerdoelenkaarten(semester_naam, canvas_course_id, api_key, gitpages
         if useIDs:
             naam_plus_naam_id+=f"_{naam_id}"
 
-        student_bewijs_path=semesteroverzichten_bewijsmappen_folder_fullpath+'/'+naam_plus_naam_id
+        student_full_path=semesteroverzichten_folder_fullpath+'/'+naam_plus_naam_id
+        os.makedirs(student_full_path, exist_ok=True)
 
         leerdoelenkaart_naam=naam_plus_naam_id+"-leerdoelenkaart"
         leerdoelenkaartNaamFromStudentNaamNoSpaces[studentNaamNoSpaces]=leerdoelenkaart_naam
 
-        drawio_output_fullpath = Tools.get_full_path_from_script_path(semesteroverzichten_folder_fullpath+'/'+leerdoelenkaart_naam+".drawio")
-        drawio_export_output_fullpath = Tools.get_full_path_from_script_path(semesteroverzichten_folder_fullpath+'/'+leerdoelenkaart_naam+exportFileType)
+        drawio_output_fullpath = Tools.get_full_path_from_script_path(student_full_path+'/'+leerdoelenkaart_naam+".drawio")
+        drawio_export_output_fullpath = Tools.get_full_path_from_script_path(student_full_path+'/'+leerdoelenkaart_naam+exportFileType)
 
         # Filter de DataFrame om alleen rijen te behouden waar 'StudentNummer' overeenkomt
         student_dataframe = dataframe[dataframe['StudentNummer'] == studentNummer]
@@ -405,8 +403,9 @@ def genereerLeerdoelenkaarten(semester_naam, canvas_course_id, api_key, gitpages
         leerdoelScores = dict(zip(student_summedScoresDataFrame['LeerdoelIndex'], student_summedScoresDataFrame['Score']))
         leerdoelbewijslinks=dict()
 
-        strPortfolio = f'# Semester {semester_naam}\n'
-        strPortfolio +="## Portfolio van "+studentNaam+'\n\n' #additional newline needed before table start.
+        #strPortfolio = f'# Semester {semester_naam}\n'
+        #strPortfolio +="## Portfolio van "+studentNaam+'\n\n' #additional newline needed before table start.
+        strPortfolio = "\n" # tabel moet starten met een newline.
         strPortfolio += "|Tijd|Score|Inlevering|\n"
         strPortfolio += "|---|---|---|\n"
 
@@ -414,7 +413,8 @@ def genereerLeerdoelenkaarten(semester_naam, canvas_course_id, api_key, gitpages
         totalPortfolioScore = 0.0
 
         # Nu nog zijn bewijsmap vullen:
-        os.makedirs(student_bewijs_path, exist_ok=True)
+        student_bewijs_fullpath=student_full_path+'/'+'bewijsmappen'
+        os.makedirs(student_bewijs_fullpath, exist_ok=True)
         for leerdoelIndex in leerdoelScores:
             summedScore = leerdoelScores[leerdoelIndex]
             if summedScore==0.0:
@@ -439,8 +439,9 @@ def genereerLeerdoelenkaarten(semester_naam, canvas_course_id, api_key, gitpages
                 print("Voeg het toe aan de deelfactor-tabel.md en de leerdoelenkaart.drawio, of verwijder het uit de beoordelingen.")
                 continue
         
-            strLeerdoelBewijs = "# "+leerdoelnaam+'\n'
-            strLeerdoelBewijs += f"(Leerdoel L{leerdoelIndex})\n\n"
+            #strLeerdoelBewijs = "# "+leerdoelnaam+'\n'
+            #strLeerdoelBewijs += f"(Leerdoel L{leerdoelIndex})\n\n"
+            strLeerdoelBewijs = "\n" # tabel moet starten met een newline.
             strLeerdoelBewijs += "|Tijd|Score|Inlevering|\n"
             strLeerdoelBewijs += "|---|---|---|\n"
 
@@ -461,16 +462,16 @@ def genereerLeerdoelenkaarten(semester_naam, canvas_course_id, api_key, gitpages
             
             weightedSummedScore = summedScore/deelfactor
             strLeerdoelBewijs += '\n'
-            strLeerdoelBewijs += f'TotaalScore: {"{:.1f}".format(summedScore)}\n'
-            strLeerdoelBewijs += f"Gedeeld door deelfactor: {str(deelfactor)}\n"
-            strLeerdoelBewijs += f'# Gewogen TotaalScore: {str("{:.1f}".format(weightedSummedScore))}\n'
+            strLeerdoelBewijs += f'TotaalScore: {"{:.1f}".format(summedScore)}   \n'
+            strLeerdoelBewijs += f"Gedeeld door deelfactor: {str(deelfactor)}   \n\n" # lege regel nodig voor pandoc om header te herkennen.
+            strLeerdoelBewijs += f'## Gewogen TotaalScore: {str("{:.1f}".format(weightedSummedScore+0.01))}\n\n' #0.01 to force round up in doubt.
             
-            leerdoelbewijsFilename = student_bewijs_path+f"/Bewijs_L{leerdoelIndex}.md"
+            leerdoelbewijsFilename = student_bewijs_fullpath+f"/Bewijs_Leerdoel_L{leerdoelIndex}.md"
             Tools.write_to_file(strLeerdoelBewijs,leerdoelbewijsFilename)
 
             # vewijder de prefix leerdoelenkaarten/, omdat de drawio daar al in komt.
             # vanuit de drawio hoeft dus alleen naar binnen de submap leerdoelenkaarten gelinkt te worden.
-            leerdoelbewijsFilename=leerdoelbewijsFilename.replace(semesteroverzichten_folder_fullpath+'/','')
+            leerdoelbewijsFilename=leerdoelbewijsFilename.replace(student_full_path+'/','')
             leerdoelbewijsFilename=leerdoelbewijsFilename.replace(' ','%20')
             leerdoelbewijsFilename=leerdoelbewijsFilename.replace('.md','.html') # omdat github pages html (erbij) maakt van .md.
             leerdoelbewijslinks[leerdoelIndex]=leerdoelbewijsFilename
@@ -482,8 +483,10 @@ def genereerLeerdoelenkaarten(semester_naam, canvas_course_id, api_key, gitpages
             if len(lstCompressedPortfolioItems)==0:
                 lstCompressedPortfolioItems.append(portfolioItem)
             else:
+                # Als het leerdoel al aanwezig is, verhoog zijn score dan met het huidige portfolioItem.
                 if lstCompressedPortfolioItems[-1][0]==portfolioItem[0] and lstCompressedPortfolioItems[-1][2]==portfolioItem[2]:
                     lstCompressedPortfolioItems[-1]=(portfolioItem[0],f"{float(lstCompressedPortfolioItems[-1][1])+float(portfolioItem[1])}",portfolioItem[2])
+                    # Zoniet, voeg dan eer nieuwe regel toe voor het nieuwe portfolioItem (de eerste voor diens leerdoel)
                 else:
                     lstCompressedPortfolioItems.append(portfolioItem)
 
@@ -495,12 +498,21 @@ def genereerLeerdoelenkaarten(semester_naam, canvas_course_id, api_key, gitpages
         portfolioTotalScoreFromStudentNaamNoSpaces[studentNaamNoSpaces] = float("{:.1f}".format(totalPortfolioScore)) # float, to allow numerical sorting.
 
         portfolio_filenaam = naam_plus_naam_id+"-portfolio"
-        portfolio_output_fullpath = Tools.get_full_path_from_script_path(semesteroverzichten_folder_fullpath+'/'+portfolio_filenaam+".md")
+        portfolio_output_fullpath = Tools.get_full_path_from_script_path(student_full_path+'/'+portfolio_filenaam+".md")
         Tools.write_to_file(strPortfolio,portfolio_output_fullpath)
 
         portfolioFilenaamFromStudentNaamNoSpaces[studentNaamNoSpaces]=portfolio_filenaam
         template_fullpath = get_full_path_van_input_leerdoelenkaart_drawio(semester_config_folder)
-        LeerdoelenkaartKleurder.kleurLeerdoelenKaart(template_fullpath, drawio_output_fullpath, leerdoelScores, leerdoelbewijslinks)
+        gewogenLeerdoelScores = dict()
+        for leerdoelIndex in leerdoelScores:
+            deelfactorRow = deelfactorTabel.get(leerdoelIndex,'geen')
+            if (deelfactorRow!='geen'):
+                deelfactor = float(deelfactorRow['deelfactor'])
+                gewogenLeerdoelScores[leerdoelIndex] = leerdoelScores[leerdoelIndex]/float(deelfactor)
+            else:
+                gewogenLeerdoelScores[leerdoelIndex] = 0.0
+
+        LeerdoelenkaartKleurder.kleurLeerdoelenKaart(template_fullpath, drawio_output_fullpath, gewogenLeerdoelScores, leerdoelbewijslinks)
 
         # Exporteren.. kan zo'n 5 sec duren per .drawio.
         drawio_deskop_executable_fullpath="C:\\Program Files\\draw.io\\draw.io.exe"
@@ -509,19 +521,25 @@ def genereerLeerdoelenkaarten(semester_naam, canvas_course_id, api_key, gitpages
         # eenmaal geconverteerd naar .svg is de .drawio niet meer nodig.
         os.remove(drawio_output_fullpath)
 
+        # maak een index.md aan voor de student
+        strIndex = f"\n# Overzicht van {studentNaam}\n\n"
+        strIndex += f"[Portfolio]({portfolio_filenaam}.html)\n\n"
+        strIndex += f"[Leerdoelenkaart]({leerdoelenkaart_naam}.svg)\n\n"
+        Tools.write_to_file(strIndex,student_full_path+'/index.md')
+
         # nog eens voor de zekerheid:
         if DebugMode!="Release - field usage: No pickle buffering":
             print('\n!!! LET OP !!! DEBUG BUILD: POSSIBLY NO INFORMATION FETCHED FROM CANVAS !!!!\n')
 
     # Bereken links voor de cross-linking van de semesteroverzichten-tabel gesorteerd op naam en die gesorteerd op score.
-    semesteroverzichten_tabel_naam_zonder_extensie = "semesteroverzichten-tabel"
+    semesteroverzichten_tabel_naam_zonder_extensie = f"Semesteroverzicht_{semester_naam}_-_op_naam"
     if useIDs:
         semesteroverzichten_tabel_naam_zonder_extensie += f"-{str_docenten_id}"
 
     filenaam_semesteroverzichten_tabel_sorted_names = f"{semesteroverzichten_tabel_naam_zonder_extensie}.md"
     semesteroverzichten_tabel_sorted_names_link = f"{semesteroverzichten_tabel_naam_zonder_extensie}.html"
 
-    semesteroverzichten_tabel_naam_sorted_scores_zonder_extensie = "semesteroverzichten-tabel-sorted-scores"
+    semesteroverzichten_tabel_naam_sorted_scores_zonder_extensie = f"Semesteroverzicht_{semester_naam}_-_op_score"
     if useIDs:
         semesteroverzichten_tabel_naam_sorted_scores_zonder_extensie += f"-{str_docenten_id}"
 
@@ -543,7 +561,10 @@ def genereerLeerdoelenkaarten(semester_naam, canvas_course_id, api_key, gitpages
         studentNaam=student['name']
         studentNaamNoSpaces=studentNaam.replace(' ','_')
         naam_id = dicNaamUnderscoredNaarId[studentNaamNoSpaces]
-        naam_plus_naam_id = f"{studentNaamNoSpaces}_{naam_id}"
+        if useIDs:
+            naam_plus_naam_id = f"{studentNaamNoSpaces}_{naam_id}"
+        else:
+            naam_plus_naam_id = studentNaamNoSpaces
 
         df_row = None
         if not studentNaamNoSpaces in dicNaamUnderscoredNaarId:
@@ -555,8 +576,8 @@ def genereerLeerdoelenkaarten(semester_naam, canvas_course_id, api_key, gitpages
             'Portfolio': ""}
         else:
             unweighted_totalScore = portfolioTotalScoreFromStudentNaamNoSpaces[studentNaamNoSpaces] 
-            portfolio_filenaam = portfolioFilenaamFromStudentNaamNoSpaces[studentNaamNoSpaces]+'.html'
-            leerdoelenkaart_filenaam = leerdoelenkaartNaamFromStudentNaamNoSpaces[studentNaamNoSpaces]+exportFileType
+            portfolio_filenaam = naam_plus_naam_id+"/"+portfolioFilenaamFromStudentNaamNoSpaces[studentNaamNoSpaces]+'.html'
+            leerdoelenkaart_filenaam = naam_plus_naam_id+"/"+leerdoelenkaartNaamFromStudentNaamNoSpaces[studentNaamNoSpaces]+exportFileType
             df_row = {'Naam': studentNaam, 'Score': unweighted_totalScore, 
                         'Leerdoelenkaart': f"[leerdoelenkaart]({leerdoelenkaart_filenaam})", 
                         'Portfolio': f"[portfolio]({portfolio_filenaam})"}
@@ -572,10 +593,14 @@ def genereerLeerdoelenkaarten(semester_naam, canvas_course_id, api_key, gitpages
     df_sorted_score = overzicht_dataframe.sort_values(by=['Score','Naam'], ascending=[False,True])
     df_sorted_score.to_markdown(semesteroverzichten_tabel_sorted_scores_published_fullpath, index=False)
 
-    # voeg headers en crosslinks toe aan beide files:
-    strHeader = f"# Semesteroverzicht {semester_naam}\n"
     strLinkOverzichtOpNaam = f'[Sorteer op Score]({semesteroverzichten_tabel_sorted_scores_link})\n'
     strLinkOverzichtOpScore = f'[Sorteer op Naam]({semesteroverzichten_tabel_sorted_names_link})\n'
+
+    # voeg headers en crosslinks toe aan beide files:
+    # alleen header als resultaat in .md (door github pages naar html) 
+    # bij resultaat in .html via pandoc niet, want pandoc voegt dan titel toe
+    # (tenzij je die optie niet invult, maar dan wordt de console vervuild met warnings)
+    strHeader = f"# Semesteroverzicht {semester_naam}\n" if useGithubPages else ""
 
     # markdown tables need a leading newline.
     strOverzichtOpNaam = strHeader + strLinkOverzichtOpNaam + '\n' + Tools.read_from_file(semesteroverzichten_tabel_sorted_names_published_fullpath).replace(':','')
@@ -588,7 +613,8 @@ def genereerLeerdoelenkaarten(semester_naam, canvas_course_id, api_key, gitpages
     shutil.copy(gh_pages_startpagina_source_fullpath,Tools.get_full_path_from_script_path(pages_folder+'/README.md'))
 
     if not useGithubPages:
-        # Convert .md to .html using pypandoc
+        # Convert all .md to .html using pypandoc
+        print ("Export not for github pages, so converting all .md to .html ourselves (please wait)...")
         semester_output_folder_fullpath=Tools.get_full_path_from_script_path(semester_output_folder)
         github_markdown_css_fullpath=Tools.get_full_path_from_script_path('github-markdown.css')
         convert_md_to_html_and_update(semester_output_folder_fullpath, github_markdown_css_fullpath)
