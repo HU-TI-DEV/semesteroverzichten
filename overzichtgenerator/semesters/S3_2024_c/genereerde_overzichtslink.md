@@ -1,1 +1,1 @@
-https://mavehu.github.io/semesteroverzichten/semesters/S3_2024_c/Semesteroverzicht_S3_2024_c_-_op_naam-XS2PZCD7L26I601KGTSQBOKAN.html
+https://mavehu.github.io/semesteroverzichten/semesters/S3_2024_c/Semesteroverzicht_S3_2024_c_-_op_naam.html
