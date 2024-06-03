@@ -269,7 +269,7 @@ def convert_md_to_html_and_update(semester_output_folder_fullpath,github_markdow
 
                 shutil.copy(github_markdown_css_fullpath,os.path.join(root, 'github-markdown.css'))
 
-                #os.remove(md_path)
+                os.remove(md_path) # comment out for debugging
 
 # De uitleg van deze functie is onderaan dit bestand te vinden.
 def genereerLeerdoelenkaarten(semester_naam, canvas_course_id, api_key, gitpageslink, DebugMode, useIDs, useGithubPages):
@@ -652,10 +652,10 @@ def genereerLeerdoelenkaarten(semester_naam, canvas_course_id, api_key, gitpages
 #DebugMode="Initial Debug: Store and Load pickle" 
 
 # For developinging visualisation and output based on earlier extracted canvas data (to save time)
-DebugMode="Fast output debug: Load pickle of earlier extracted Canvas data"
+#DebugMode="Fast output debug: Load pickle of earlier extracted Canvas data"
 
 # Real usage of the software: extract latest data from Canvas.
-#DebugMode="Release - field usage: No pickle buffering" 
+DebugMode="Release - field usage: No pickle buffering" 
 #------------------------------------------------
 
 api_key = read_api_key_from_file('api_key.txt')
