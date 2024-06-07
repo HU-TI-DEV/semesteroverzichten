@@ -8,7 +8,8 @@ import random
 import shutil
 import pypandoc
 import matplotlib.pyplot as plt
-from datetime import datetime
+from datetime import datetime, timedelta
+import matplotlib.dates as mdates
 
 # NB: de index in deze array correspondeert met de score van het leerdoel met die index.
 # In de drawio grafiek is de eerste index 1 (L1_). De eerste score entry wordt dus niet gebruikt.
@@ -497,61 +498,6 @@ def genereerLeerdoelenkaarten(semester_naam, canvas_course_id, api_key, gitpages
             strPortfolio += f"|{portfolioItem[0]}|{portfolioItem[1]}|{portfolioItem[2]}|\n"
             totalPortfolioScore += float(portfolioItem[1])
         strPortfolio += f'\nTotaal: {"{:.1f}".format(totalPortfolioScore)}\n'
-
-        # maak er ook een grafiekje bij
-        # Definieer het formaat van de tijdstippen
-        # tijdstip_formaat = "%Y-%m-%d %H:%M:%S"
-        # prevItem = None
-        # lstTijdCumScoreTuples = []
-        # summedScore=0.0
-        # summedTime=0.0
-        # peak=0.0
-        # for portfolioItem in lstCompressedPortfolioItems:
-        #     if prevItem is None:
-        #         summedScore += float(portfolioItem[1])
-        #         peak=max(peak,summedScore)
-        #         lstTijdCumScoreTuples.append((summedTime,summedScore))
-        #         prevItem = portfolioItem
-        #         continue
-            
-        #     # Zet de string tijdstippen om naar datetime objecten
-        #     tijdstip1_dt = datetime.strptime(prevItem[0], tijdstip_formaat)
-        #     tijdstip2_dt = datetime.strptime(portfolioItem[0], tijdstip_formaat)
-        #     # Bereken het verschil tussen de twee tijdstippen
-        #     verschil = tijdstip2_dt - tijdstip1_dt
-        #     summedTime += verschil.total_seconds()
-        #     summedScore += float(portfolioItem[1])
-        #     peak=max(peak,summedScore)
-        #     lstTijdCumScoreTuples.append((summedTime,summedScore))
-
-        # if len(lstTijdCumScoreTuples)>0 :
-        #     # Splits de data in twee aparte lijsten
-        #     tijden = [tijd for tijd, score in lstTijdCumScoreTuples]
-        #     scores = [score for tijd, score in lstTijdCumScoreTuples]
-
-        #     # Plot de gegevens
-        #     plt.figure(figsize=(10, 5))
-        #     plt.ylim(bottom=0,top=(peak*1.05))
-        #     plt.plot(tijden, scores, marker='o', linestyle='-')
-
-        #     # Stel de labels en titel in
-        #     plt.xlabel('Tijd (seconden)')
-        #     plt.ylabel('Cumulatieve Score')
-        #     plt.title('Cumulatieve Score over Tijd')
-        #     plt.grid(True)
-
-        #     # Toon de grafiek
-        #     # plt.show()
-        #     # exit()
-        #     # Sla de grafiek op
-        #     portfolio_grafiek_output_fullpath = Tools.get_full_path_from_script_path(student_full_path+'/cumulatieve_score_over_tijd.png')
-        #     plt.savefig(portfolio_grafiek_output_fullpath)
-        #     plt.close()
-        #     strPortfolio += f"\n![Cumulatieve Score over Tijd](./cumulatieve_score_over_tijd.png)\n"
-
-        import matplotlib.pyplot as plt
-        from datetime import datetime, timedelta
-        import matplotlib.dates as mdates
 
         tijdstip_formaat = "%Y-%m-%d %H:%M:%S"
         prevItem = None
