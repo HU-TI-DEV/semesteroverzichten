@@ -7,6 +7,8 @@ import pickle
 import random
 import shutil
 import pypandoc
+import matplotlib.pyplot as plt
+from datetime import datetime
 
 # NB: de index in deze array correspondeert met de score van het leerdoel met die index.
 # In de drawio grafiek is de eerste index 1 (L1_). De eerste score entry wordt dus niet gebruikt.
@@ -452,6 +454,7 @@ def genereerLeerdoelenkaarten(semester_naam, canvas_course_id, api_key, gitpages
                 strPrettyTime = student_leerdoel_dataframe.iloc[i]["Tijd"]
                 strPrettyTime = strPrettyTime.replace('T',' ')
                 strPrettyTime = strPrettyTime.replace('Z',' ')
+                strPrettyTime = strPrettyTime[0:-1] # discard space at the end.
                 strLeerdoelBewijs += f'|{strPrettyTime}|{"{:.1f}".format(student_leerdoel_dataframe.iloc[i]["Score"])}|<a href="{inleverlink}">{student_leerdoel_dataframe.iloc[i]["Opdrachtnaam"]}</a>|\n'
                 lstPortfolioItems.append((f'{strPrettyTime}',f'{"{:.1f}".format(student_leerdoel_dataframe.iloc[i]["Score"])}',f'<a href="{inleverlink}">{student_leerdoel_dataframe.iloc[i]["Opdrachtnaam"]}</a>'))
 
@@ -494,6 +497,111 @@ def genereerLeerdoelenkaarten(semester_naam, canvas_course_id, api_key, gitpages
             strPortfolio += f"|{portfolioItem[0]}|{portfolioItem[1]}|{portfolioItem[2]}|\n"
             totalPortfolioScore += float(portfolioItem[1])
         strPortfolio += f'\nTotaal: {"{:.1f}".format(totalPortfolioScore)}\n'
+
+        # maak er ook een grafiekje bij
+        # Definieer het formaat van de tijdstippen
+        # tijdstip_formaat = "%Y-%m-%d %H:%M:%S"
+        # prevItem = None
+        # lstTijdCumScoreTuples = []
+        # summedScore=0.0
+        # summedTime=0.0
+        # peak=0.0
+        # for portfolioItem in lstCompressedPortfolioItems:
+        #     if prevItem is None:
+        #         summedScore += float(portfolioItem[1])
+        #         peak=max(peak,summedScore)
+        #         lstTijdCumScoreTuples.append((summedTime,summedScore))
+        #         prevItem = portfolioItem
+        #         continue
+            
+        #     # Zet de string tijdstippen om naar datetime objecten
+        #     tijdstip1_dt = datetime.strptime(prevItem[0], tijdstip_formaat)
+        #     tijdstip2_dt = datetime.strptime(portfolioItem[0], tijdstip_formaat)
+        #     # Bereken het verschil tussen de twee tijdstippen
+        #     verschil = tijdstip2_dt - tijdstip1_dt
+        #     summedTime += verschil.total_seconds()
+        #     summedScore += float(portfolioItem[1])
+        #     peak=max(peak,summedScore)
+        #     lstTijdCumScoreTuples.append((summedTime,summedScore))
+
+        # if len(lstTijdCumScoreTuples)>0 :
+        #     # Splits de data in twee aparte lijsten
+        #     tijden = [tijd for tijd, score in lstTijdCumScoreTuples]
+        #     scores = [score for tijd, score in lstTijdCumScoreTuples]
+
+        #     # Plot de gegevens
+        #     plt.figure(figsize=(10, 5))
+        #     plt.ylim(bottom=0,top=(peak*1.05))
+        #     plt.plot(tijden, scores, marker='o', linestyle='-')
+
+        #     # Stel de labels en titel in
+        #     plt.xlabel('Tijd (seconden)')
+        #     plt.ylabel('Cumulatieve Score')
+        #     plt.title('Cumulatieve Score over Tijd')
+        #     plt.grid(True)
+
+        #     # Toon de grafiek
+        #     # plt.show()
+        #     # exit()
+        #     # Sla de grafiek op
+        #     portfolio_grafiek_output_fullpath = Tools.get_full_path_from_script_path(student_full_path+'/cumulatieve_score_over_tijd.png')
+        #     plt.savefig(portfolio_grafiek_output_fullpath)
+        #     plt.close()
+        #     strPortfolio += f"\n![Cumulatieve Score over Tijd](./cumulatieve_score_over_tijd.png)\n"
+
+        import matplotlib.pyplot as plt
+        from datetime import datetime, timedelta
+        import matplotlib.dates as mdates
+
+        tijdstip_formaat = "%Y-%m-%d %H:%M:%S"
+        prevItem = None
+        lstTijdCumScoreTuples = []
+        summedScore = 0.0
+        summedTime = 0.0
+        peak = 0.0
+        for portfolioItem in lstCompressedPortfolioItems:
+            summedScore += float(portfolioItem[1])
+            lstTijdCumScoreTuples.append((portfolioItem[0], summedScore))
+            peak = max(peak, summedScore)
+
+        if len(lstTijdCumScoreTuples) > 0:
+            # Zet de tijdstippen om naar datetime-objecten
+            tijden_datetime = [datetime.strptime(tijd, tijdstip_formaat) for tijd, score in lstTijdCumScoreTuples]
+            
+            # Bereken het tijdsverschil in seconden ten opzichte van het eerste tijdstip
+            eerste_tijdstip = tijden_datetime[0]
+            tijden_in_seconden = [(tijd - eerste_tijdstip).total_seconds() for tijd in tijden_datetime]
+            scores = [score for tijd, score in lstTijdCumScoreTuples]
+
+            # Plot de gegevens
+            plt.figure(figsize=(10, 5))
+            plt.plot(tijden_in_seconden, scores, marker='o', linestyle='-')
+
+            # Stel de labels en titel in
+            plt.xlabel('Tijd')
+            plt.ylabel('Cumulatieve Score')
+            plt.title('Cumulatieve Score over Tijd')
+            plt.grid(True)
+            plt.tight_layout()
+
+            # Zorg dat de y-as bij 0 begint
+            plt.ylim(bottom=0)
+
+            # Formatter voor de x-as labels
+            def seconden_naar_tijdstip(x, pos):
+                return (eerste_tijdstip + timedelta(seconds=x)).strftime(tijdstip_formaat)
+
+            formatter = plt.FuncFormatter(seconden_naar_tijdstip)
+            plt.gca().xaxis.set_major_formatter(formatter)
+
+            # Zet de rotatie van de x-as labels
+            plt.gcf().autofmt_xdate()
+
+            portfolio_grafiek_output_fullpath = Tools.get_full_path_from_script_path(student_full_path+'/cumulatieve_score_over_tijd.png')
+            plt.savefig(portfolio_grafiek_output_fullpath)
+            plt.close()
+            strPortfolio += f"\n![Cumulatieve Score over Tijd](./cumulatieve_score_over_tijd.png)\n"
+
 
         portfolioTotalScoreFromStudentNaamNoSpaces[studentNaamNoSpaces] = float("{:.1f}".format(totalPortfolioScore)) # float, to allow numerical sorting.
 
@@ -619,7 +727,6 @@ def genereerLeerdoelenkaarten(semester_naam, canvas_course_id, api_key, gitpages
         github_markdown_css_fullpath=Tools.get_full_path_from_script_path('github-markdown.css')
         convert_md_to_html_and_update(semester_output_folder_fullpath, github_markdown_css_fullpath)
 
-    from datetime import datetime
     current_time = datetime.now()
     print("\nJe kunt de disk cache en gpu errors van de de drawio naar svg export tool negeren.")
     print("\nCurrent Time:", current_time)
@@ -652,10 +759,10 @@ def genereerLeerdoelenkaarten(semester_naam, canvas_course_id, api_key, gitpages
 #DebugMode="Initial Debug: Store and Load pickle" 
 
 # For developinging visualisation and output based on earlier extracted canvas data (to save time)
-#DebugMode="Fast output debug: Load pickle of earlier extracted Canvas data"
+DebugMode="Fast output debug: Load pickle of earlier extracted Canvas data"
 
 # Real usage of the software: extract latest data from Canvas.
-DebugMode="Release - field usage: No pickle buffering" 
+#DebugMode="Release - field usage: No pickle buffering" 
 #------------------------------------------------
 
 api_key = read_api_key_from_file('api_key.txt')
