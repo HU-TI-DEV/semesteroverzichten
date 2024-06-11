@@ -4,26 +4,26 @@ Het script overzichtgenerator/LeerdoelenkaartGenerator.py kan worden aangeroepen
 
 docs
 
-    semesters
+    semesters   
 
-        S3_2024
+        S3_2024   
 
-            semesteroverzicht_S3_2024.html
-            Ahmet_Canak
-                index.html
-                portfolio.html
-                leerdoelenkaart.html
-                bewijsmappen
-                    bewijs_leerdoel_L2.html
-                    bewijs_leerdoel_L3.html
-                    bewijs_leerdoel_L7.html
-            Roel_Stierum
-                 index.html
-                 etc ....
+            semesteroverzicht_S3_2024.html    
+            Ahmet_Canak   
+                index.html   
+                portfolio.html   
+                leerdoelenkaart.html   
+                bewijsmappen   
+                    bewijs_leerdoel_L2.html   
+                    bewijs_leerdoel_L3.html   
+                    bewijs_leerdoel_L7.html   
+            Roel_Stierum   
+                 index.html   
+                 etc ....   
 
-De gebruiksaanwijzing is onderaan het script zelf te vinden.
+De gebruiksaanwijzing is onderaan het script zelf te vinden.   
 
-Docenten krijgen via teams/onedrive toegang tot de S3_2024 folder, en daarmee tot 
+Docenten krijgen via teams/onedrive toegang tot de S3_2024 folder, en daarmee tot    
 
 semesteroverzicht_S3_2024.html
 Studenten krijgen via teams/onedrive toegang tot hun persoonlijke folder, welke eenvoudig gebrowsed kan worden via de persoonlijke index.html.
