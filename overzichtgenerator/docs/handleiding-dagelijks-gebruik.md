@@ -12,6 +12,6 @@ Per student bestaat het semesteroverzicht uit:
 Het genereert de semesteroverzichten.
 ## Hoe bekijk je de semesteroverzichten?
 ### Als docent
-De docent heeft een link naar een verborgen markdown-bestand, welke links naar de semesteroverzichten van alle studenten bevat.
+De docent heeft een link naar de shared folder, welke links naar de semesteroverzichten van alle studenten bevat.
 ### Als student
-De student krijgt alleen de link naar het verborgen markdown-bestand welke zijn eigen semesteroverzicht bevat. Aangezien de docent toegang heeft tot de links van alle studenten, kan hij (eenmalig initieel of later desgevraagd) met elke student diens individuele toegangslink delen.
+De student krijgt alleen de link naar de shared folder welke zijn eigen semesteroverzicht bevat. Aangezien de docent toegang heeft tot de folders van alle studenten, kan hij (eenmalig initieel of later desgevraagd) met elke student diens individuele folder delen.

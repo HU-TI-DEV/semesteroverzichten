@@ -159,3 +159,15 @@ Aanpassing van het plan, zodat studenten niet elkaars leerdoelenkaart kunnen zie
 - Voeg aan elke ellips met zo'n leerdoel een lege link toe (die <u>niet</u> opent "in new window" (ALT+SHIFT+L, ENTER)) (werkt alleen een voor een)
 
 - Met de functie testKleuring kan snel worden gecheckt of er geen link ontbreekt.
+
+## Voortgangsgrafiekje
+- In portfolio een voortgangsgrafiekje toevoegen - behaalde score tegen het tijdstip van inlevering.
+
+## Koppelingen naar leeruitkomsten
+- evt. in leerdoelenkaart ook leeruitkomsten (in rechthoekjes?) weergeven.
+  die laten dan een gewogen som zien van gekoppelde leerdoelen.
+
+## Peilmomenten verdisconteren
+- op de peilmomenten kun je met de studenten praten over de leerdoelenkaart en het automatisch gegenereerde portfolio overzicht.
+  op de peilmomenten uploaden studenten ook nog reflectieverslagen e.d. Die kunnen weer worden gekoppeld aan een leerdoel per 
+  peilmoment, zodat je die er makkelijk bij kunt pakken (door op het leerdoel in de leerdoelenkaart te klikken)

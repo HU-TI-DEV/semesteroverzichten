@@ -705,10 +705,10 @@ def genereerLeerdoelenkaarten(semester_naam, canvas_course_id, api_key, gitpages
 #DebugMode="Initial Debug: Store and Load pickle" 
 
 # For developinging visualisation and output based on earlier extracted canvas data (to save time)
-DebugMode="Fast output debug: Load pickle of earlier extracted Canvas data"
+# DebugMode="Fast output debug: Load pickle of earlier extracted Canvas data"
 
 # Real usage of the software: extract latest data from Canvas.
-#DebugMode="Release - field usage: No pickle buffering" 
+DebugMode="Release - field usage: No pickle buffering" 
 #------------------------------------------------
 
 api_key = read_api_key_from_file('api_key.txt')
