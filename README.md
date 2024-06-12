@@ -1,5 +1,6 @@
-# semesteroverzichten
+# Semesteroverzichten
 
+## Leerdoelenkaart + Portfolio overzichten van het semester
 Het script overzichtgenerator/LeerdoelenkaartGenerator.py kan worden aangeroepen om van de gekoppelde semesters overzichten te genereren. Die overzichten komen als volgt terecht in een docs folder:
 
 docs
@@ -28,6 +29,11 @@ Docenten krijgen via teams/onedrive toegang tot de S3_2024 folder, en daarmee to
 semesteroverzicht_S3_2024.html
 Studenten krijgen via teams/onedrive toegang tot hun persoonlijke folder, welke eenvoudig gebrowsed kan worden via de persoonlijke index.html.
 
-Eigenlijk zouden de resulterende docs dus niet op deze git gepubliceerd hoeven worden (kan in .gitignore).
-Het is puur even voor iemand die nieuw is, en resultaten wil kunnen bekijken: die kan de git clonen en op 
-de eigen pc door de geproduceerde folders browsen.
+## Nakijk overzicht
+Zodra een docent tijd heeft om feedback te geven op canvas inleveringen, kan een docent met zijn canvas-api-key
+met het script overzichtgenerator/GetReportLatestUploadsAndComments.py een nakijkoverzicht.html genereren.
+
+Die bevat een lijst van links naar inleverentries op de canvas waar een student iets nieuws heeft geupload dat nog niet van 
+commentaar is voorzien of waar een student een commentaar heeft toegevoegd waar een docent nog niet op heeft gereageerd.
+Dankzij die tool is het niet meer nodig om handmatig de cijferlijsten op canvas door te ziften, op zoek naar studenten die nog
+op een reactie wachten. Je kunt direct op de links klikken.
