@@ -9,7 +9,7 @@ docs
         S3_2024   
 
             semesteroverzicht_S3_2024.html    
-            Ahmet_Canak   
+            Pietje_Puk   
                 index.html   
                 portfolio.html   
                 leerdoelenkaart.html   
@@ -17,7 +17,7 @@ docs
                     bewijs_leerdoel_L2.html   
                     bewijs_leerdoel_L3.html   
                     bewijs_leerdoel_L7.html   
-            Roel_Stierum   
+            Jan_Klaassen   
                  index.html   
                  etc ....   
 
