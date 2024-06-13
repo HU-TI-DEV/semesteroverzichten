@@ -186,7 +186,7 @@ def GetReportLatestUploadsAndComments(course_id, course_name, ignored_assignment
             # nope, schrijf het naar een .md bestand in de huidige directory:
             filename = f"{course_name}_nakijkoverzicht.md"
             filename_fullpath=get_full_path_from_script_path(filename)
-            with open(filename_fullpath, "w") as file:
+            with open(filename_fullpath, "w", encoding="utf-8") as file:
                 file.write("# Nakijkrapport\n")
                 file.write("De onderstaande canvas-inleveringen hebben feedback nodig:\n")
                 file.write("- Ze zijn geupload na het laatste comment, of\n")
