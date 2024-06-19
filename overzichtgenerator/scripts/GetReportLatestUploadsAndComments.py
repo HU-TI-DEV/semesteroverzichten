@@ -155,8 +155,9 @@ def GetReportLatestUploadsAndComments(course_id, course_name, ignored_assignment
                             # Check if there are submission comments
                             comments = submission['submission_comments'] if 'submission_comments' in submission else []
                             
-                            clickable_link = get_url_link_for_md(assignment['name'] + " - " + enrollment['user']['name'], f"https://{canvas_domain}/courses/{course_id}/assignments/{assignment['id']}/submissions/{enrollment['user_id']}")
-                            #clickable_link = get_url_link_for_md(assignment['name'] + " - " + enrollment['user']['name'],)
+                            # Voorheen maakten we een clickable link naar de canvas-pagina van de inlevering, maar handiger is een link naar de bijbehorende speedgrader-pagina.
+                            #clickable_link_obs = get_url_link_for_md(assignment['name'] + " - " + enrollment['user']['name'], f"https://{canvas_domain}/courses/{course_id}/assignments/{assignment['id']}/submissions/{enrollment['user_id']}")
+                            clickable_link = get_url_link_for_md(assignment['name'] + " - " + enrollment['user']['name'], f"https://{canvas_domain}/courses/{course_id}/gradebook/speed_grader?assignment_id={assignment['id']}&student_id={enrollment['user_id']}")
 
                             # Check if there's a new upload without any comment
                             if submission['submitted_at'] is not None and (not comments or datetime.fromisoformat(comments[-1]['created_at'][:-1]) < datetime.fromisoformat(submission['submitted_at'][:-1])):
@@ -192,8 +193,8 @@ def GetReportLatestUploadsAndComments(course_id, course_name, ignored_assignment
                 file.write("- Ze zijn geupload na het laatste comment, of\n")
                 file.write("- Het laatste comment is van de student zelf.\n\n")
                 
-                file.write("Tip: Log eerst in op canvas bij je browser die automatisch opent bij het klikken op een document-link, voordat je op een link klinkt\n")
-                file.write("## Entries\n")
+                file.write("Tip: Log eerst in op canvas bij je browser die automatisch opent bij het klikken op een document-link, voordat je op een link klinkt.\n\n")
+                file.write("## Entries  \n  ")
                 for line in report:
                     file.write(f"{line}\n")
             
@@ -227,6 +228,7 @@ ignored_assignments_s2={"sprint 1 - C++ opdrachten","sprint 2 - C++ opdrachten",
                         "sprint 3 - C++ opdrachten","sprint 4 - C++ opdrachten", 
                         "sprint 5 - C++ opdrachten","sprint 6 - C++ opdrachten", 
                         "Roll Call Attendance",
+                        "Eindbeslissing",
                         "Peilmoment 1", "Peilmoment 2", "Peilmoment 3", 
                         "Link naar C++ opdrachten","Verslag Excursie",
                         "Prototyping Solderen","Back log Sprint 5",

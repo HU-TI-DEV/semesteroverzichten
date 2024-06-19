@@ -6,3 +6,5 @@ obs/
 .pkl
 **/*.drawio.bkp
 **/leerdoelenkaart-link-controle.drawio
+**/*nakijkoverzicht.html
+__pycache__/
