@@ -614,16 +614,18 @@ def genereerLeerdoelenkaarten(semester_naam, canvas_course_id, api_key, gitpages
     for student in students:
         studentNaam=student['name']
         studentNaamNoSpaces=studentNaam.replace(' ','_')
-        naam_id = dicNaamUnderscoredNaarId[studentNaamNoSpaces]
+
         if useIDs:
+            if studentNaamNoSpaces in dicNaamUnderscoredNaarId:
+                naam_id = dicNaamUnderscoredNaarId[studentNaamNoSpaces]
+            else:
+                addLog(strLogs, f"!!! {studentNaamNoSpaces} wordt geskipped, want nog niet toegevoegd aan config/studenten-id-tabel.md !!!")
+                continue
             naam_plus_naam_id = f"{studentNaamNoSpaces}_{naam_id}"
         else:
             naam_plus_naam_id = studentNaamNoSpaces
 
-        df_row = None
-        if not studentNaamNoSpaces in dicNaamUnderscoredNaarId:
-            continue
-        
+        df_row = None        
         if studentNaamNoSpaces not in portfolioFilenaamFromStudentNaamNoSpaces:
             df_row = {'Naam': studentNaam, 'Score': 0.0, 
             'Leerdoelenkaart': "", 
