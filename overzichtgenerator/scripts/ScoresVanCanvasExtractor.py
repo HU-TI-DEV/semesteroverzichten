@@ -96,7 +96,7 @@ def get_all_enrollments(canvas_domain, canvas_course_id, api_key):
 
     return enrollments
 
-def getNonStudentComments(canvas_domain, canvas_course_id, course_name, ignored_assignments, api_key):
+def getComments(canvas_domain, canvas_course_id, course_name, ignored_assignments, api_key, include_student):
     headers = {"Authorization": f"Bearer {api_key}"}
 
     # Initialize report list
@@ -105,6 +105,7 @@ def getNonStudentComments(canvas_domain, canvas_course_id, course_name, ignored_
     print("*********************************")
     print(course_name)
     print("*********************************")
+    print("bezig.. bij een grote cursus kan het even duren.. (10 seconden per cursist oid)")
 
     # Haal alle opdrachten op met paginatie
     assignments = get_all_assignments(canvas_domain, canvas_course_id, api_key)
@@ -134,7 +135,7 @@ def getNonStudentComments(canvas_domain, canvas_course_id, course_name, ignored_
                             # of teachers will be used in the code below). Or todo: check role of author_id.
                             if comments:
                                 for comment in comments:
-                                    if comment['author_id'] != enrollment['user_id']:
+                                    if (comment['author_id'] != enrollment['user_id']) or include_student:
                                         report_line = (assignment['name'], enrollment['user']['name'], enrollment['user']['sis_user_id'], comment['created_at'], submission_url, comment['comment'])
                                         report.append(report_line)
                         else:
@@ -224,14 +225,14 @@ def splitReportLinesForLeerdoelen(report):
                 reportLinesSplitForLeerdoelen.append((line[0],line[1],line[2],line[3],line[4],leerdoelIndex,score))
     return reportLinesSplitForLeerdoelen
 
-def getStudentsAndScoreData(canvas_domain,canvas_course_id,api_key,course_name,ignored_assignments):
+def getStudentsAndScoreData(canvas_domain,canvas_course_id,api_key,course_name,ignored_assignments,allow_self_scoring):
     start_time = time.time()
 
     students = get_list_of_all_students(canvas_domain=canvas_domain,canvas_course_id=canvas_course_id,api_key=api_key)
     for student in students:
         print(f"Studentnummer: {student['student_number']}, Naam: {student['name']}")
 
-    report = getNonStudentComments(canvas_domain=canvas_domain,canvas_course_id=canvas_course_id,course_name=course_name,ignored_assignments=ignored_assignments,api_key=api_key)
+    report = getComments(canvas_domain=canvas_domain,canvas_course_id=canvas_course_id,course_name=course_name,ignored_assignments=ignored_assignments,api_key=api_key,include_student=allow_self_scoring)
 
     end_time = time.time()
     elapsed_time = end_time - start_time

@@ -126,7 +126,7 @@ def get_full_path_van_input_leerdoelenkaart_drawio(semester_config_folder):
 def controleerLinks(semester_config_folder):
     template_fullpath = get_full_path_van_input_leerdoelenkaart_drawio(semester_config_folder)
     output_fullpath = template_fullpath.replace("leerdoelenkaart","leerdoelenkaart-link-controle")
-    testInkleuring(template_fullpath, output_fullpath,maxLeerdoel=72)
+    testInkleuring(template_fullpath, output_fullpath,maxLeerdoel=100)
 
 def genereer_initiele_studenten_id_suggesties_tabel(students, semester_config_folder, kolomHeadersStudentIdsTabel):
     kolomHeadersStudentIdsTabel = ["Naam","ID"]
@@ -275,7 +275,7 @@ def convert_md_to_html_and_update(semester_output_folder_fullpath,github_markdow
                 os.remove(md_path) # comment out for debugging
 
 # De uitleg van deze functie is onderaan dit bestand te vinden.
-def genereerLeerdoelenkaarten(semester_naam, canvas_course_id, api_key, gitpageslink, DebugMode, useIDs, useGithubPages):
+def genereerLeerdoelenkaarten(semester_naam, canvas_course_id, api_key, gitpageslink, DebugMode, useIDs, useGithubPages, allow_self_scoring, OneDriveFolderVoorGedeeldeTeamsFoldersMetSemesteroverzichten):
     strLogs=""
     canvas_domain = 'canvas.hu.nl'
     ignored_assignments={}
@@ -321,7 +321,7 @@ def genereerLeerdoelenkaarten(semester_naam, canvas_course_id, api_key, gitpages
         addLog(strLogs, strLog)
 
     if DebugMode!="Fast output debug: Load pickle of earlier extracted Canvas data":
-        students, dataframe, dataframe_summedScores = ScoresVanCanvasExtractor.getStudentsAndScoreData(canvas_domain,canvas_course_id,api_key,course_name,ignored_assignments)
+        students, dataframe, dataframe_summedScores = ScoresVanCanvasExtractor.getStudentsAndScoreData(canvas_domain,canvas_course_id,api_key,course_name,ignored_assignments,allow_self_scoring)
 
     if DebugMode=="Initial Debug: Store and Load pickle":
         with open('temp.pkl', 'wb') as file:
@@ -354,7 +354,7 @@ def genereerLeerdoelenkaarten(semester_naam, canvas_course_id, api_key, gitpages
     dicNaamUnderscoredNaarId={} # dic van name_underscored -> link, uit leerdoelenkaartTabel
     for naam in studenten_id_from_name:
         naam_id = studenten_id_from_name[naam]
-        naam_underscored=naam.replace(' ', '_')
+        naam_underscored=naam.lstrip().rstrip().replace(' ', '_') #verwijder leading en trailing spaces en vervang resterende spaties door underscores.
         
         dicNaamUnderscoredNaarId[naam_underscored] = naam_id
 
@@ -675,6 +675,12 @@ def genereerLeerdoelenkaarten(semester_naam, canvas_course_id, api_key, gitpages
         github_markdown_css_fullpath=Tools.get_full_path_from_script_path('github-markdown.css')
         convert_md_to_html_and_update(semester_output_folder_fullpath, github_markdown_css_fullpath)
 
+    # kopieer naar OneDrive Folder voor gedeelde Teamsfolders met Semesteroverzichten
+    if(len(OneDriveFolderVoorGedeeldeTeamsFoldersMetSemesteroverzichten)>3):
+        Tools.copy_source_to_target_with_base(semesteroverzichten_folder_fullpath,OneDriveFolderVoorGedeeldeTeamsFoldersMetSemesteroverzichten)
+    else:
+        addLog(strLogs, f"!!! OneDriveFolderVoorGedeeldeTeamsFoldersMetSemesteroverzichten is vermoedelijk niet ingesteld, dus niet gekopieerd !!!")
+
     current_time = datetime.now()
     print("\nJe kunt de disk cache en gpu errors van de de drawio naar svg export tool negeren.")
     print("\nCurrent Time:", current_time)
@@ -693,13 +699,24 @@ def genereerLeerdoelenkaarten(semester_naam, canvas_course_id, api_key, gitpages
 #
 # Met de parameter useGithubPages=True, worden de textbestanden als .md gegenereerd, en wordt het converteren naar .html aan github pages overgelaten.
 # Met de parameter useGithubPages=False, worden de textbestanden als .html gegenereerd, en wordt het converteren naar .html lokaal gedaan.
-# De laatste optie is dus geschikt voor publicatie op een andere webserver dan github pages of naar (gesharede teams-) folders.
+# Deze optie is dus geschikt voor publicatie op een andere webserver dan github pages of naar (gesharede teams-) folders.
+
+# In het geval je via Teams folders wilt publiceren: 
+# Maak voor de eerste keer op de Teams van het Semester een map aan (in het onderste voorbeeld genaamd S3_2024_c) 
+# en share die met jezelf en evt later met andere docenten. maak vervolgens een "shortcut" ervan 
+# naar onedrive. Dan zie je de gedeelde map in windows verkenner, en kun
+# je hem verplaatsen naar je onedrive folder waar je alle semesteroverzichten in wilt bewaren.
+# Geef de parameter OneDriveFolderVoorGedeeldeTeamsFoldersMetSemesteroverzichten de naam van die onedrive folder.
+# Daarbinnen wordt je gedeelde teams map geupdate. De submappen kunnen dan op teams gedeeld worden met studenten.
+#
+# Met de parameter allow_self_scoring=True, kunnen studenten (ook) zichzelf beoordelen.
 #
 # Voorbeeld aanroep:
 # api_key = read_api_key_from_file('api_key.txt')
 # genereerLeerdoelenkaarten(semester_naam='S3_2024_c',canvas_course_id='39753', api_key=api_key,
 #                           gitpageslink = "https://mavehu.github.io/semesteroverzichten",
-#                           DebugMode=DebugMode, useIDs=False, useGithubPages=False)
+#                           DebugMode=DebugMode, useIDs=False, useGithubPages=False, allow_self_scoring=True,
+#                           OneDriveFolderVoorGedeeldeTeamsFoldersMetSemesteroverzichten = "D:\OneDrive\OneDrive - Stichting Hogeschool Utrecht\Semesteroverzichten")
 
 # Uncomment the proper Debug Mode below:
 #------------------------------------------------
@@ -714,10 +731,12 @@ DebugMode="Release - field usage: No pickle buffering"
 #------------------------------------------------
 
 api_key = read_api_key_from_file('api_key.txt')
-genereerLeerdoelenkaarten(semester_naam='S3_2024_c',canvas_course_id='39753', api_key=api_key,
-                          gitpageslink = "https://mavehu.github.io/semesteroverzichten",
-                          DebugMode=DebugMode, useIDs=False, useGithubPages=False)
 
+genereerLeerdoelenkaarten(semester_naam='S3_2024_TI_1',canvas_course_id='44569', api_key=api_key,
+                          gitpageslink = "https://mavehu.github.io/semesteroverzichten",
+                          DebugMode=DebugMode, useIDs=False, useGithubPages=False, allow_self_scoring=True,
+                          OneDriveFolderVoorGedeeldeTeamsFoldersMetSemesteroverzichten = "D:\OneDrive\OneDrive - Stichting Hogeschool Utrecht\Semesteroverzichten")
+                    
 # Normaal bedrijf:
 # Roep bovenstaande functie een keer aan voor elk semester.
 #
@@ -730,4 +749,5 @@ genereerLeerdoelenkaarten(semester_naam='S3_2024_c',canvas_course_id='39753', ap
 # alle leerdoelen die in de leerdoelenkaart.drawio staan. Daaruit kun je dan rijen kopieren en plakken
 # in deelfactor-tabel.md (ook als je later leerdoelen toevoegt)
 # 3 De keren daarna dat je de functie aanroept, worden de leerdoelenkaarten en de gekoppelde portfolio's
-# en bewijzen proper gegenereerd naar de docs folder, welke dan gepubliceerd kan worden naar github pages.
+# en bewijzen proper gegenereerd naar de docs folder, welke dan gepubliceerd kan worden naar github pages,
+# of bijvoorbeeld gekopieerd naar shared teams-folders.

@@ -1,6 +1,6 @@
-<mxfile host="Electron" modified="2024-05-31T16:48:43.848Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/22.0.2 Chrome/114.0.5735.289 Electron/25.8.4 Safari/537.36" etag="sodn8WA1hjMII5suZPMX" version="22.0.2" type="device">
+<mxfile host="Electron" modified="2024-08-30T15:34:14.040Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/22.0.2 Chrome/114.0.5735.289 Electron/25.8.4 Safari/537.36" etag="0QBsbhP-9W9aSbqpKFcY" version="22.0.2" type="device">
   <diagram name="Copy of Page-1" id="SG1n7jbUNAIGO0vn6a7n">
-    <mxGraphModel dx="-475" dy="1168" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="-436" dy="1168" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="VXFz6mvKQ9PJlcC3uVo2-0" />
         <mxCell id="VXFz6mvKQ9PJlcC3uVo2-1" parent="VXFz6mvKQ9PJlcC3uVo2-0" />
@@ -93,7 +93,7 @@
         <mxCell id="k4e6b6dZ_VluAHgRJG0G-10" value="Je overtreft alle verwachtingen" style="ellipse;whiteSpace=wrap;html=1;fillColor=#00FFFF;" parent="VXFz6mvKQ9PJlcC3uVo2-1" vertex="1">
           <mxGeometry x="2599.25" y="323" width="131" height="42" as="geometry" />
         </mxCell>
-        <mxCell id="JQyxqjwZXSrIYbwAYboZ-1" value="&lt;font style=&quot;font-size: 21px;&quot;&gt;Maak nieuwe leerdoelenkaarten door de kopie van deze leerdoelenkaart in de config folder van je semester te customizen:&lt;br&gt;Sleep geen nieuwe ellipsen naar binnen, maar dupliceer bestaande ellipsen met LX_leerdoelen en verander de leerdoelnamen, dan is het format bruikbaar door de generator-software.&lt;br&gt;&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=25;fontStyle=0" vertex="1" parent="VXFz6mvKQ9PJlcC3uVo2-1">
+        <mxCell id="JQyxqjwZXSrIYbwAYboZ-1" value="&lt;font style=&quot;font-size: 21px;&quot;&gt;Maak nieuwe leerdoelenkaarten door de kopie van deze leerdoelenkaart in de config folder van je semester te customizen:&lt;br&gt;Sleep geen nieuwe ellipsen naar binnen, maar dupliceer bestaande ellipsen met LX_leerdoelen en verander de leerdoelnamen, dan is het format bruikbaar door de generator-software.&lt;br&gt;&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=25;fontStyle=0" parent="VXFz6mvKQ9PJlcC3uVo2-1" vertex="1">
           <mxGeometry x="2020" y="309" width="445" height="250" as="geometry" />
         </mxCell>
       </root>

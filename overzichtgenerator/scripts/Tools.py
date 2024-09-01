@@ -2,6 +2,7 @@ import os
 import subprocess
 import shutil
 import xml.etree.ElementTree as ET
+from pathlib import Path
 
 # De klasse Tools bevat wat generieke tools
 class Tools:
@@ -150,3 +151,31 @@ class Tools:
                 kolomnummer+=1
             index+=1
         return deelfactorTabel
+
+    @staticmethod
+    def copy_source_to_target_with_base(source_path, target_path):
+        source_path = Path(source_path).resolve()  # Zorg ervoor dat we met absolute paden werken
+        target_path = Path(target_path).resolve()
+        
+        # Bepaal de naam van de source folder om die in de target folder op te nemen
+        source_base_name = source_path.name
+        target_base_path = target_path / source_base_name
+        
+        # Loop door alle bestanden en mappen in de bronmap
+        for root, dirs, files in os.walk(source_path):
+            # Bepaal het relatieve pad vanaf de bronmap
+            relative_path = Path(root).relative_to(source_path)
+            target_subdir = target_base_path / relative_path
+
+            # Maak de target subdirectory aan als deze nog niet bestaat
+            if not target_subdir.exists():
+                target_subdir.mkdir(parents=True)
+
+            # Verwijder alle bestanden in de target subdirectory die mogelijk al bestaan
+            for file_name in files:
+                target_file = target_subdir / file_name
+                if target_file.exists():
+                    target_file.unlink()
+
+                # Kopieer het bestand van de bronmap naar de doellocatie
+                shutil.copy2(Path(root) / file_name, target_file)

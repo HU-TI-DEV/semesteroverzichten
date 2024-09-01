@@ -104,7 +104,7 @@ def GetReportLatestUploadsAndComments(course_id, course_name, ignored_assignment
     print("*********************************")
     print(course_name)
     print("*********************************")
-    print("bezig.. bij een grote cursus kan het even duren.. (6 cursisten per minuut oid)")
+    print("bezig.. bij een grote cursus kan het even duren.. (10 seconden per cursist oid)")
 
     self_id = get_self_id()
 
