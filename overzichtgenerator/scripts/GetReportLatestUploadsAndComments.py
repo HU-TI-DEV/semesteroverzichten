@@ -234,12 +234,16 @@ ignored_assignments_s2={"sprint 1 - C++ opdrachten","sprint 2 - C++ opdrachten",
                         "Prototyping Solderen","Back log Sprint 5",
                         "MAC adres Raspberry Pi"}
 
+ignored_assignments_s3={"Roll Call Attendance"}
+
 #GetReportLatestUploadsAndComments(course_id='32508',course_name="MRB",ignored_assignments={})
 #GetReportLatestUploadsAndComments(course_id='32732',course_name="Vision",ignored_assignments={})
 #GetReportLatestUploadsAndComments(course_id='32504',course_name="DIT",ignored_assignments={})
 #GetReportLatestUploadsAndComments(course_id='39715',course_name="THGA_2023",ignored_assignments={})
 #GetReportLatestUploadsAndComments(course_id='39897',course_name="S2",ignored_assignments=ignored_assignments_s2)
-GetReportLatestUploadsAndComments(course_id='39897',course_name="S2",ignored_assignments=ignored_assignments_s2)
+#GetReportLatestUploadsAndComments(course_id='39897',course_name="S2",ignored_assignments=ignored_assignments_s2)
+
+GetReportLatestUploadsAndComments(course_id='44569',course_name="S3_2024_TI_1",ignored_assignments=ignored_assignments_s3)
 
 end_time = time.time()
 elapsed_time = end_time - start_time

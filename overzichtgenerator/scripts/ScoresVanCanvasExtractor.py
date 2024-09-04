@@ -217,8 +217,9 @@ def splitReportLinesForLeerdoelen(report):
                 while ('0'<=curChar) and (curChar<='9'):
                     strScore+=curChar
                     pos+=1
-                    if pos<len(comment):
-                        curChar=comment[pos]
+                    if pos>=len(comment):
+                        break
+                    curChar=comment[pos]
             if (pos>startpos):
                 leerdoelIndex=int(strLeerdoelIndex)
                 score=float(strScore.replace(',','.'))
