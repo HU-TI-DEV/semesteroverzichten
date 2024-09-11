@@ -745,7 +745,7 @@ genereerLeerdoelenkaarten(semester_naam='S3_2024_TI_1',canvas_course_id='44569',
 # in de semesters folder een subfolder aangemaakt met de naam van je semester, met daarin 
 # de opzet van je semester.
 # 2. Daarin kun je dan de leerdoelenkaart.drawio aanpassen. Na de aanpassing kun je de functie
-# nogmaals aanroepen. Het bestand alleen-intieel/deelfactor-tabel-suggestie.md reflecteert dan
+# nogmaals aanroepen. Het bestand alleen-intieel/deelfactor-tabel-suggestie.md reflecteert danPR
 # alle leerdoelen die in de leerdoelenkaart.drawio staan. Daaruit kun je dan rijen kopieren en plakken
 # in deelfactor-tabel.md (ook als je later leerdoelen toevoegt)
 # 3 De keren daarna dat je de functie aanroept, worden de leerdoelenkaarten en de gekoppelde portfolio's
